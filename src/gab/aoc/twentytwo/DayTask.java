@@ -8,10 +8,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Superclass for each day's task, with getters for the input file. Each
+ * day needs to derive this class and implement 'doTask'.
+ */
 public abstract class DayTask
 {
   private static final String INPUTS_DIR = "inputs";
 
+  /**
+   * Get a Path representing this day's input file, which is expected to have
+   * been (manually) saved/downloaded to the inputs directory as e.g.
+   * "day1.txt", "day2.txt" etc.
+   */
   protected final Path getFilePath()
   {
     final String dayName = this.getClass().getSimpleName().toLowerCase();
@@ -20,6 +29,10 @@ public abstract class DayTask
     return filePath;
   }
 
+  /**
+   * Get a List of Strings representing the lines of the input file.
+   * Excludes the end-of-line characters.
+   */
   protected final List<String> getFileLines()
   {
     try
@@ -38,6 +51,15 @@ public abstract class DayTask
     }
   }
 
+  /**
+   * Run the day's task, outputting the result to the given PrintStream.
+   * Which will probably always be stdout, but it gives me flexibility to
+   * send it somewhere else in the future.
+   *
+   * In principle, 'debug' should turn on debug logging, but I haven't made
+   * use of that. Any proper debug logging in the future should go to a trace
+   * file, which will require a function signature update.
+   */
   public abstract void doTask(
     final PrintStream output, final boolean debug) throws TaskException;
 }

@@ -3,16 +3,21 @@ package gab.aoc.twentytwo;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+/**
+ * A perhaps verbose solution which aims to be readable and avoid
+ * duplication rather than solving the task in as few lines as possible.
+ */
 public class Day2 extends DayTask
 {
   /**
-   * Split line into a list of two labels.
+   * Validate that the input line contains two tokens, and split that into
+   * a two-element list.
    */
   private static List<String> splitInputLine(final String line)
   {
@@ -44,7 +49,7 @@ public class Day2 extends DayTask
   private static int scoreRound(
     final Play opponent, final Play mine)
   {
-    return mine.baseScore() + mine.playAgainst(opponent);
+    return mine.playAgainst(opponent);
   }
 
   /**
@@ -61,9 +66,9 @@ public class Day2 extends DayTask
 
     switch (strategy)
     {
-      case LOSE: mine = opponent.getPlayThatThisBeats(); break;
+      case LOSE: mine = opponent.getLosingPlay(); break;
       case DRAW: mine = opponent; break;
-      case WIN: mine = opponent.getPlayThatBeatsThis(); break;
+      case WIN: mine = opponent.getWinningPlay(); break;
       default: throw new LogicException("Bad strategy");
     }
 
@@ -92,7 +97,7 @@ public class Day2 extends DayTask
   }
 
   /**
-   * Enum representing the possible plays and the labels that represent them.
+   * Enum representing the possible plays and their base scores.
    */
   private enum Play
   {
@@ -100,24 +105,6 @@ public class Day2 extends DayTask
     PAPER(2, "B", "Y"),
     SCISSORS(3, "C", "Z"),
     ;
-
-    private static final Map<Play, Play> playBeatsPlay;
-    private static final Map<Play, Play> playBeatenByPlay;
-
-    static
-    {
-      final Map<Play, Play> beats = new HashMap<>();
-      beats.put(ROCK, SCISSORS);
-      beats.put(PAPER, ROCK);
-      beats.put(SCISSORS, PAPER);
-      playBeatsPlay = Collections.unmodifiableMap(beats);
-
-      final Map<Play, Play> beatenBy = new HashMap<>();
-      beatenBy.put(ROCK, PAPER);
-      beatenBy.put(PAPER, SCISSORS);
-      beatenBy.put(SCISSORS, ROCK);
-      playBeatenByPlay = Collections.unmodifiableMap(beatenBy);
-    }
 
     /**
      * Get the Play representing the given input label.
@@ -133,9 +120,19 @@ public class Day2 extends DayTask
       return opponent;
     }
 
+    /**
+     * The base score granted for using this play.
+     */
     final int baseScore;
+
+    /**
+     * The labels that represent this play.
+     */
     final List<String> labels;
 
+    /**
+     * Private enum constructor
+     */
     private Play(final int baseScore, final String... labels)
     {
       this.baseScore = baseScore;
@@ -143,56 +140,120 @@ public class Day2 extends DayTask
     }
 
     /**
-     * Get the base score for using this play, before scoring on
-     * loss/draw/win.
-     */
-    public int baseScore()
-    {
-      return this.baseScore;
-    }
-
-    /**
      * Play this action against an opponent's action, and return the
-     * resulting score (not including the base score).
+     * resulting total score.
      */
     public int playAgainst(final Play opponent)
     {
-      final int score;
-
-      if (Objects.equals(this, opponent.getPlayThatThisBeats()))
-      {
-        score = 0;
-      }
-      else if (Objects.equals(this, opponent))
-      {
-        score = 3;
-      }
-      else if (Objects.equals(this, opponent.getPlayThatBeatsThis()))
-      {
-        score = 6;
-      }
-      else
-      {
-        throw new LogicException("Logic error");
-      }
-
-      return score;
+      final Outcome outcome = Outcome.getOutcome(this, opponent);
+      return this.baseScore + outcome.getScore();
     }
 
     /**
-     * Get the action that beats this one.
+     * Get the action that will win against this play.
      */
-    public Play getPlayThatBeatsThis()
+    public Play getWinningPlay()
     {
-      return playBeatenByPlay.get(this);
+      return findPlayForOutcome(Outcome.LOSE);
     }
 
     /**
-     * Get the action that this beats.
+     * Get the action that will lose against this play.
      */
-    public Play getPlayThatThisBeats()
+    public Play getLosingPlay()
     {
-      return playBeatsPlay.get(this);
+      return findPlayForOutcome(Outcome.WIN);
+    }
+
+    /**
+     * Find the play that will produce the desired outcome.
+     */
+    private Play findPlayForOutcome(final Outcome outcome)
+    {
+      final Map<Play, Outcome> outcomes = Outcome.getOutcomesFor(this);
+      return outcomes.keySet().stream()
+        .filter( play -> outcomes.get(play).equals(outcome) )
+        .findFirst()
+        .orElseThrow( () -> new LogicException("Bad outcome" ) );
+    }
+  }
+
+  /**
+   * Outcomes of a match, and the score from each match.
+   */
+  private enum Outcome
+  {
+    LOSE(0),
+    DRAW(3),
+    WIN(6),
+    ;
+
+    /**
+     * Mapping plays by the player and plays by the opponent to the outcome.
+     */
+    private static final Map<Play, Map<Play, Outcome>> outcomes;
+
+    static
+    {
+      final Map<Play, Outcome> rockOutcomes = new EnumMap<>(Play.class);
+      rockOutcomes.put(Play.ROCK, DRAW);
+      rockOutcomes.put(Play.PAPER, LOSE);
+      rockOutcomes.put(Play.SCISSORS, WIN);
+
+      final Map<Play, Outcome> paperOutcomes = new EnumMap<>(Play.class);
+      paperOutcomes.put(Play.ROCK, WIN);
+      paperOutcomes.put(Play.PAPER, DRAW);
+      paperOutcomes.put(Play.SCISSORS, LOSE);
+
+      final Map<Play, Outcome> scissorsOutcomes = new EnumMap<>(Play.class);
+      scissorsOutcomes.put(Play.ROCK, LOSE);
+      scissorsOutcomes.put(Play.PAPER, WIN);
+      scissorsOutcomes.put(Play.SCISSORS, DRAW);
+
+      final Map<Play, Map<Play, Outcome>> fullMap = new EnumMap<>(Play.class);
+      fullMap.put(Play.ROCK, Collections.unmodifiableMap(rockOutcomes));
+      fullMap.put(Play.PAPER, Collections.unmodifiableMap(paperOutcomes));
+      fullMap.put(
+        Play.SCISSORS, Collections.unmodifiableMap(scissorsOutcomes));
+
+      outcomes = Collections.unmodifiableMap(fullMap);
+    }
+
+    /**
+     * @return the outcome mapping for a given play.
+     */
+    public static Map<Play, Outcome> getOutcomesFor(final Play play)
+    {
+      return outcomes.get(play);
+    }
+
+    /**
+     * @return the outcome of a match of our play against an opponent's play.
+     */
+    public static Outcome getOutcome(final Play ours, final Play opponent)
+    {
+      return outcomes.get(ours).get(opponent);
+    }
+
+    /**
+     * Score given for this outcome.
+     */
+    private final int score;
+
+    /**
+     * Private enum constructor
+     */
+    private Outcome(final int score)
+    {
+      this.score = score;
+    }
+
+    /**
+     * @return the score for this outcome
+     */
+    public int getScore()
+    {
+      return this.score;
     }
   }
 
@@ -221,6 +282,9 @@ public class Day2 extends DayTask
       return result;
     }
 
+    /**
+     * The label representing this strategy.
+     */
     final String label;
 
     private Strategy(final String label)

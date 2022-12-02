@@ -6,14 +6,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Day 1's task. A simple one - we just group the list of calories for each
+ * elf and use stream logic to compute the results.
+ */
 class Day1 extends DayTask
 {
   @Override
   public void doTask(final PrintStream output, final boolean debug)
   {
     //-------------------------------------------------------------------------
-    // By joining on comma, and splitting on double-comma, we get a sequence
-    // of comma-separated lists representing each elf.
+    // By joining on comma, we can identify the file's empty lines by then
+    // splitting on double commas. The result, a list of comma-separated
+    // calorie counts per elf, is convenient for further processing.
     //-------------------------------------------------------------------------
     final List<String> inputLines = getFileLines();
     final String[] listForEachElf = String.join(",", inputLines).split(",,");
@@ -21,6 +26,11 @@ class Day1 extends DayTask
 
     for (final String commaSeparatedCalories : listForEachElf)
     {
+      //-----------------------------------------------------------------------
+      // Processing using IntStream makes it easy to sum each list -
+      // marginally less verbose than using a for loop. (Getting rid of the
+      // outer for loop would require some, IMO, ugly stream logic.)
+      //-----------------------------------------------------------------------
       final String[] calorieArray = commaSeparatedCalories.split(",");
       final int total = Stream.of(calorieArray)
         .mapToInt(Integer::parseInt)
@@ -29,7 +39,8 @@ class Day1 extends DayTask
     }
 
     //-------------------------------------------------------------------------
-    // Highest-to-lowest sort.
+    // This sorts into highest-to-lowest order, which trivialises finding
+    // the highest and summing the top three.
     //-------------------------------------------------------------------------
     Collections.sort(countForEachElf, Collections.reverseOrder());
 

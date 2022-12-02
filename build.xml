@@ -1,0 +1,9 @@
+<project default="build">
+  <target name="build">
+    <delete dir="build"/>
+    <mkdir dir="build"/>
+    <javac srcdir="src" destdir="build" debug="true" debuglevel="lines,vars,source"/>
+    <mkdir dir="libjava"/>
+    <jar destfile="libjava/adventofcode.jar" basedir="build"/>
+  </target>
+</project>

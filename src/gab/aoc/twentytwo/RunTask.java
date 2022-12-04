@@ -2,7 +2,7 @@ package gab.aoc.twentytwo;
 
 import java.io.PrintStream;
 
-class RunTask
+public class RunTask
 {
   public static void main(final String[] args) throws TaskException
   {

@@ -9,6 +9,10 @@ import java.util.stream.Stream;
 
 public class Day4 extends DayTask
 {
+  /**
+   * Get a pairing of ranges for each input line, as a two-element list of
+   * integer lists.
+   */
   private static List<List<Integer>> getPairing(final String line)
   {
     final String[] ranges = line.split(",");
@@ -19,6 +23,10 @@ public class Day4 extends DayTask
     return pairings;
   }
 
+  /**
+   * Given the string representation of a range (e.g. "5-8"), return an
+   * integer list of the range.
+   */
   private static List<Integer> getRange(final String rangeString)
   {
     final String[] bounds = rangeString.split("-");
@@ -31,6 +39,10 @@ public class Day4 extends DayTask
     return range;
   }
 
+  /**
+   * Given a range pairing, return true if either pairing is a subset of
+   * the other.
+   */
   private static boolean checkForSubset(final List<List<Integer>> pairing)
   {
     final List<Integer> first = pairing.get(0);
@@ -42,17 +54,38 @@ public class Day4 extends DayTask
     return subsetExists;
   }
 
+  /**
+   * Given a range pairing, return true if there is any overlap between the
+   * two ranges.
+   */
+  private static boolean checkForOverlap(final List<List<Integer>> pairing)
+  {
+    final List<Integer> first = pairing.get(0);
+    final List<Integer> second = pairing.get(1);
+    final boolean overlapExists = first.stream()
+      .filter(i -> second.contains(i))
+      .findFirst()
+      .isPresent();
+
+    return overlapExists;
+  }
+
   @Override
   public void doTask(final PrintStream output, final boolean debug)
   {
     final List<String> inputLines = getFileLines();
-    final int subsetPairingsCount = inputLines.stream()
+    final long subsetPairingsCount = inputLines.stream()
       .map(Day4::getPairing)
       .filter(Day4::checkForSubset)
-      .toArray()
-      .length;
+      .count();
 
     output.println("Number of pairings with subset: " + subsetPairingsCount);
-  }
 
+    final long overlapPairingsCount = inputLines.stream()
+      .map(Day4::getPairing)
+      .filter(Day4::checkForOverlap)
+      .count();
+
+    output.println("Number of pairings with overlap: " + overlapPairingsCount);
+  }
 }

@@ -63,9 +63,7 @@ public class Day4 extends DayTask
     final List<Integer> first = pairing.get(0);
     final List<Integer> second = pairing.get(1);
     final boolean overlapExists = first.stream()
-      .filter(i -> second.contains(i))
-      .findFirst()
-      .isPresent();
+      .anyMatch(second::contains);
 
     return overlapExists;
   }

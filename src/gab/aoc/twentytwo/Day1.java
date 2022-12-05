@@ -1,9 +1,9 @@
 package gab.aoc.twentytwo;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -12,6 +12,16 @@ import java.util.stream.Stream;
  */
 class Day1 extends DayTask
 {
+  /**
+   * Takes a comma-separated list of numbers and returns their sum.
+   */
+  private static int sumCalorieList(final String commaSeparatedList)
+  {
+    final String[] items = commaSeparatedList.split(",");
+    final int sum = Stream.of(items).mapToInt(Integer::parseInt).sum();
+    return sum;
+  }
+
   @Override
   public void doTask(final PrintStream output, final boolean debug)
   {
@@ -22,21 +32,10 @@ class Day1 extends DayTask
     //-------------------------------------------------------------------------
     final List<String> inputLines = getFileLines();
     final String[] listForEachElf = String.join(",", inputLines).split(",,");
-    final List<Integer> countForEachElf = new ArrayList<>();
 
-    for (final String commaSeparatedCalories : listForEachElf)
-    {
-      //-----------------------------------------------------------------------
-      // Processing using IntStream makes it easy to sum each list -
-      // marginally less verbose than using a for loop. (Getting rid of the
-      // outer for loop would require some, IMO, ugly stream logic.)
-      //-----------------------------------------------------------------------
-      final String[] calorieArray = commaSeparatedCalories.split(",");
-      final int total = Stream.of(calorieArray)
-        .mapToInt(Integer::parseInt)
-        .sum();
-      countForEachElf.add(total);
-    }
+    final List<Integer> countForEachElf = Stream.of(listForEachElf)
+      .map(Day1::sumCalorieList)
+      .collect(Collectors.toList());
 
     //-------------------------------------------------------------------------
     // This sorts into highest-to-lowest order, which trivialises finding

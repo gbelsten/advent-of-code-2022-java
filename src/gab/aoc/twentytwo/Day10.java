@@ -7,6 +7,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import gab.aoc.util.InputFileException;
+import gab.aoc.util.LogicException;
+
 public class Day10 extends DayTask
 {
   @Override

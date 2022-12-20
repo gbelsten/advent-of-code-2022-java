@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import gab.aoc.util.InputFileException;
+
 public class Day13 extends DayTask
 {
   private static <T> void addItemToPairList(

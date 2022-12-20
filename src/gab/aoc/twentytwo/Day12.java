@@ -10,6 +10,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import gab.aoc.util.InputFileException;
+import gab.aoc.util.LogicException;
+
 public class Day12 extends DayTask
 {
   private static List<Tile> getTilesForLine(final int row, final String line)

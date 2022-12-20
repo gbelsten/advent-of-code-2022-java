@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import gab.aoc.util.InputFileException;
+import gab.aoc.util.LogicException;
+
 public class Day11 extends DayTask
 {
   private static final Pattern MONKEY_REGEX = Pattern.compile(

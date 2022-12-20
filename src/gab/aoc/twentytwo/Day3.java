@@ -11,6 +11,8 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 
+import gab.aoc.util.LogicException;
+
 public class Day3 extends DayTask
 {
   private static final int GROUP_SIZE = 3;

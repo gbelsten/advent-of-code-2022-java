@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import gab.aoc.util.LogicException;
+
 public class Day7 extends DayTask
 {
   @Override

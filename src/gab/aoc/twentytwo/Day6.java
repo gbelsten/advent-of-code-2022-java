@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import gab.aoc.util.InputFileException;
+import gab.aoc.util.TaskException;
+
 public class Day6 extends DayTask
 {
   /**

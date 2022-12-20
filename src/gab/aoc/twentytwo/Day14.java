@@ -2,12 +2,15 @@ package gab.aoc.twentytwo;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import gab.aoc.util.Coordinate;
+import gab.aoc.util.InputFileException;
+import gab.aoc.util.LogicException;
 
 public class Day14 extends DayTask
 {
@@ -42,6 +45,20 @@ public class Day14 extends DayTask
       .mapToInt(Coordinate::y)
       .max()
       .orElseThrow( () -> new InputFileException("Failed to get max y") );
+  }
+
+  private static Coordinate coordinateFromInput(final String input)
+  {
+    final String[] tokens = input.split(",");
+
+    if (tokens.length != 2)
+    {
+      throw new InputFileException("Bad coordinate string: " + input);
+    }
+
+    final int x = Integer.parseInt(tokens[0]);
+    final int y = Integer.parseInt(tokens[1]);
+    return new Coordinate(x, y);
   }
 
   /**
@@ -232,57 +249,6 @@ public class Day14 extends DayTask
     output.println("Units of sand at rest (part 2): " + part2);
   }
 
-  private static class Coordinate
-  {
-    private final int x;
-    private final int y;
-
-    public Coordinate(final int x, final int y)
-    {
-      this.x = x;
-      this.y = y;
-    }
-
-    public Coordinate(final String str)
-    {
-      final String[] tokens = str.split(",");
-
-      if (tokens.length != 2)
-      {
-        throw new InputFileException("Bad coordinate string: " + str);
-      }
-
-      this.x = Integer.parseInt(tokens[0]);
-      this.y = Integer.parseInt(tokens[1]);
-    }
-
-    public int x() { return this.x; }
-    public int y() { return this.y; }
-
-    @Override
-    public String toString() { return this.x() + "," + this.y(); }
-
-    @Override
-    public boolean equals(final Object o)
-    {
-      if (o instanceof Coordinate)
-      {
-        final Coordinate c = (Coordinate)o;
-        return (this.x() == c.x() && this.y() == c.y());
-      }
-      else
-      {
-        return false;
-      }
-    }
-
-    @Override
-    public int hashCode()
-    {
-      return Arrays.hashCode(new int[] { this.x(), this.y()});
-    }
-  }
-
   private static class RockStructure
   {
     public static RockStructure buildFromInputLine(final String input)
@@ -302,7 +268,7 @@ public class Day14 extends DayTask
 
     public void addLineTo(final String newCoordinate)
     {
-      final Coordinate endOfLine = new Coordinate(newCoordinate);
+      final Coordinate endOfLine = coordinateFromInput(newCoordinate);
 
       if (this.lastAdded == null)
       {

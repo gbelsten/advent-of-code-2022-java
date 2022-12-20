@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import gab.aoc.util.InputFileException;
+import gab.aoc.util.LogicException;
+import gab.aoc.util.TaskException;
+
 /**
  * A perhaps verbose solution which aims to be readable and avoid
  * duplication rather than solving the task in as few lines as possible.

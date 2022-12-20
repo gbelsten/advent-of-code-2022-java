@@ -2,6 +2,8 @@ package gab.aoc.twentytwo;
 
 import java.io.PrintStream;
 
+import gab.aoc.util.TaskException;
+
 public class RunTask
 {
   public static void main(final String[] args) throws TaskException

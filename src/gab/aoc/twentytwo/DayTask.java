@@ -8,6 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import gab.aoc.util.InputFileException;
+import gab.aoc.util.TaskException;
+
 /**
  * Superclass for each day's task, with getters for the input file. Each
  * day needs to derive this class and implement 'doTask'.

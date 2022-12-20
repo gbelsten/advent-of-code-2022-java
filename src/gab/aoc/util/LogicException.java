@@ -1,4 +1,4 @@
-package gab.aoc.twentytwo;
+package gab.aoc.util;
 
 public class LogicException extends RuntimeException
 {

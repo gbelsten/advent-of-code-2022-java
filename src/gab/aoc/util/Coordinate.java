@@ -16,6 +16,11 @@ public class Coordinate
   public int x() { return this.x; }
   public int y() { return this.y; }
 
+  public int manhattanDistanceTo(final Coordinate c)
+  {
+    return Math.abs(this.x() - c.x()) + Math.abs(this.y() - c.y());
+  }
+
   @Override
   public String toString() { return this.x() + "," + this.y(); }
 
